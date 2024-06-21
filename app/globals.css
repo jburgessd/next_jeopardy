@@ -2,32 +2,259 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-visible-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #dddddd;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #5c5c7b;
+  border-radius: 50px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #7878a3;
+}
+
+.text-shadow-h {
+  text-shadow:
+    0.05vh 0.05vh #000,
+    0.1vh 0.1vh #000,
+    0.15vh 0.15vh #000,
+    0.2vh 0.2vh #000,
+    0.25vh 0.25vh #000,
+    0.3vh 0.3vh #000,
+    0.35vh 0.35vh #000;
+}
+
+.category {
+  font-size: 2.5vh;
+  line-height: 2.75vh;
+  text-transform: uppercase;
+  letter-spacing: 0.2vw;
+  cursor: default;
+  color: #ffffff;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .input-class {
+    @apply text-16 placeholder:text-16 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400;
+  }
+
+  .grid-background {
+    @apply h-screen w-full bg-black-1 bg-grid-white/[0.2] items-center justify-center;
+  }
+
+  .grid-background-gradient {
+    @apply absolute pointer-events-none inset-0 z-0 items-center justify-center bg-black-1 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)];
+  }
+
+  .hero-text {
+    @apply text-5xl sm:text-7xl font-bold relative z-0 bg-clip-text text-transparent bg-gradient-to-t from-neutral-100 to-neutral-300 py-8;
+  }
+
+  .sheet-content button {
+    @apply focus:ring-0 focus-visible:ring-transparent focus:ring-offset-0 focus-visible:ring-offset-0 focus-visible:outline-none focus-visible:border-none !important;
+  }
+
+  .text14_padding10 {
+    @apply text-14 px-4 py-2.5 font-semibold;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .header-2 {
+    @apply text-18 font-semibold text-gray-900;
+  }
+
+  .text-10 {
+    @apply text-[10px] leading-[14px];
+  }
+
+  .text-12 {
+    @apply text-[12px] leading-[16px];
+  }
+
+  .text-14 {
+    @apply text-[14px] leading-[20px];
+  }
+
+  .text-16 {
+    @apply text-[16px] leading-[24px];
+  }
+
+  .text-18 {
+    @apply text-[18px] leading-[22px];
+  }
+
+  .text-20 {
+    @apply text-[20px] leading-[24px];
+  }
+
+  .text-24 {
+    @apply text-[24px] leading-[30px];
+  }
+
+  .text-26 {
+    @apply text-[26px] leading-[32px];
+  }
+
+  .text-30 {
+    @apply text-[30px] leading-[38px];
+  }
+
+  .text-36 {
+    @apply text-[36px] leading-[44px];
+  }
+
+  /* Root Layout */
+  .root-layout {
+    @apply flex h-16 items-center justify-between p-5 sm:p-8 md:hidden;
+  }
+
+  /* Footer */
+  .footer {
+    @apply flex cursor-pointer items-center justify-between gap-2 py-6;
+  }
+
+  .footer_name {
+    @apply flex items-center justify-center rounded-full bg-gray-200 max-xl:hidden;
+  }
+
+  .footer_email {
+    @apply flex flex-1 flex-col justify-center max-xl:hidden;
+  }
+
+  .footer_name_mobile {
+    @apply flex items-center justify-center rounded-full bg-gray-200;
+  }
+
+  .footer_email_mobile {
+    @apply flex flex-1 flex-col justify-center;
+  }
+
+  .footer_image {
+    @apply relative size-5 max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center;
+  }
+
+  .footer_image_mobile {
+    @apply relative size-5;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    @apply sticky left-0 top-0 font-korinna flex h-screen w-fit flex-col z-20 justify-between border-r border-black-1 bg-blue-heather pt-8 text-white text-shadow-h max-md:hidden sm:p-4 xl:p-6 2xl:w-[355px];
+  }
+
+  .sidebar-logo {
+    @apply 2xl:text-26 text-[26px] font-bold text-black-1 max-xl:hidden;
+  }
+
+  .sidebar-link {
+    @apply flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center xl:justify-start;
+  }
+
+  .sidebar-label {
+    @apply text-16 font-semibold text-black-2 max-xl:hidden;
+  }
+
+  /* Home */
+  .home {
+    @apply no-scrollbar flex size-full max-xl:max-h-screen max-h-screen overflow-hidden p-8;
+  }
+
+  .home-content {
+    @apply no-scrollbar flex flex-1 w-full h-full flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 xl:max-h-screen xl:overflow-y-scroll;
+  }
+
+  .home-header {
+    @apply flex flex-col justify-between gap-8 px-5 sm:px-8 py-7 lg:py-12;
+  }
+
+  .header-box {
+    @apply flex flex-col gap-1;
+  }
+
+  .header-box-title {
+    @apply text-24 lg:text-30 font-semibold font-korinna text-gray-400;
+  }
+
+  .header-box-subtext {
+    @apply text-14 lg:text-16 font-normal font-korinna text-gray-300;
+  }
+
+  /* Mobile nav */
+  .mobilenav-sheet {
+    @apply flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto;
+  }
+
+  .mobilenav-sheet_close {
+    @apply flex gap-3 items-center p-4 rounded-lg w-full max-w-60;
+  }
+
+  /* Auth */
+  .auth-asset {
+    @apply flex h-screen w-full sticky top-0 items-center justify-center bg-black-1 max-lg:hidden;
+  }
+
+  /* Auth Form */
+  .auth-form {
+    @apply flex min-h-screen w-full max-w-[420px] flex-col text-white justify-center gap-5 py-10 md:gap-8;
+  }
+
+  .form-item {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .form-label {
+    @apply text-14 w-full max-w-[280px] font-medium text-white text-shadow-h;
+  }
+
+  .form-message {
+    @apply text-12 text-red-500;
+  }
+
+  .form-btn {
+    @apply text-16 rounded-lg bg-blue-700 hover:bg-blue-400 text-white text-shadow-h shadow-form;
+  }
+
+  .form-link {
+    @apply text-14 cursor-pointer font-medium text-bankGradient;
   }
 }
