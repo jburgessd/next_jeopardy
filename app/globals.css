@@ -62,12 +62,47 @@
 }
 
 .category {
-  font-size: 2.5vh;
+  font-size: 1.3rem;
   line-height: 2.75vh;
   text-transform: uppercase;
   letter-spacing: 0.2vw;
+  text-align: center;
   cursor: default;
   color: #ffffff;
+  width: inherit;
+  height: inherit;
+  margin: auto;
+}
+
+.pop-up {
+  font-size: 1rem;
+  line-height: 2vh;
+  text-transform: uppercase;
+  letter-spacing: 0.1vw;
+}
+
+.values {
+  font-size: 3vw;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: default;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  height: 100%;
+  width: 100%;
+  grid-gap: 0;
+}
+
+.board-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: inherit/6;
+  height: inherit/6;
 }
 
 @layer utilities {

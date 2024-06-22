@@ -39,12 +39,10 @@ export type CreateGameObjectContextType = {
     categoryName: string,
     categoryIndex: number
   ) => void;
-  updateFinalJeopardy: (
-    category: string,
-    clue: string,
-    media: string,
-    response: string
-  ) => void;
+  updateFinalJeopardyCategory: (category: string) => void;
+  updateFinalJeopardyClue: (clue: string) => void;
+  updateFinalJeopardyMedia: (media: string) => void;
+  updateFinalJeopardyResponse: (response: string) => void;
 };
 
 export const CreateGameDataContext =
@@ -119,21 +117,38 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const updateFinalJeopardy = (
-    category: string,
-    clue: string,
-    media: string,
-    response: string
-  ) => {
+  const updateFinalJeopardyCategory = (category: string) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
       newGameObject.finalJeopardy.category = category;
+      return newGameObject;
+    });
+  };
+
+  const updateFinalJeopardyClue = (clue: string) => {
+    setGameObject((prevState) => {
+      const newGameObject = { ...prevState };
       newGameObject.finalJeopardy.clue = clue;
+      return newGameObject;
+    });
+  };
+
+  const updateFinalJeopardyMedia = (media: string) => {
+    setGameObject((prevState) => {
+      const newGameObject = { ...prevState };
       newGameObject.finalJeopardy.media = media;
+      return newGameObject;
+    });
+  };
+
+  const updateFinalJeopardyResponse = (response: string) => {
+    setGameObject((prevState) => {
+      const newGameObject = { ...prevState };
       newGameObject.finalJeopardy.response = response;
       return newGameObject;
     });
   };
+
   return (
     <CreateGameDataContext.Provider
       value={{
@@ -144,7 +159,10 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
         updateJeopardyCategoryName,
         updateDoubleJeopardyClue,
         updateDoubleJeopardyCategoryName,
-        updateFinalJeopardy,
+        updateFinalJeopardyCategory,
+        updateFinalJeopardyClue,
+        updateFinalJeopardyMedia,
+        updateFinalJeopardyResponse,
       }}
     >
       {children}

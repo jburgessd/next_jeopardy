@@ -29,7 +29,7 @@ export const gameTemplate = {
   plays: 0,
   jeopardy: [
     {
-      categoryName: "This is a BS category name",
+      categoryName: "",
       clues: [
         {
           clue: "",
