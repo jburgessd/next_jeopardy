@@ -1,32 +1,103 @@
 import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 export const createGame = mutation({
   args: {
     title: v.string(),
-    airDate: v.string(),
-    creator: v.string(),
     jeopardy: v.id("boards"),
     doubleJeopardy: v.id("boards"),
-    finalJeopardy: v.id("clues"),
-    plays: v.number(),
+    finalJeopardy: v.object({
+      category: v.string(),
+      clue: v.string(),
+      media: v.optional(v.string()),
+      response: v.string(),
+    }),
+    plays: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    await ctx.db.insert("games", {
+    const gameExists = await ctx.db
+      .query("createdGames")
+      .filter((q) => q.eq(q.field("title"), args.title))
+      .first();
+    if (gameExists || gameExists === args) {
+      return gameExists;
+    }
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError(
+        "Unauthorized" + 401 + "You must be signed in to create a clue."
+      );
+    }
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), identity?.email))
+      .first();
+
+    const gameId: Id<"createdGames"> = await ctx.db.insert("createdGames", {
       title: args.title,
-      airDate: args.airDate,
-      creator: args.creator,
+      creator: user!._id,
       jeopardy: args.jeopardy,
       doubleJeopardy: args.doubleJeopardy,
       finalJeopardy: args.finalJeopardy,
-      plays: args.plays,
+      plays: args.plays!,
     });
+    const ret = await ctx.db.get(gameId);
+    return ret;
   },
 });
 
-export const getGameById = query({
-  args: { gameId: v.id("games") },
+export const archiveGame = mutation({
+  args: {
+    title: v.string(),
+    complete: v.boolean(),
+    airDate: v.string(),
+    jeopardy: v.id("boards"),
+    doubleJeopardy: v.id("boards"),
+    finalJeopardy: v.object({
+      category: v.string(),
+      clue: v.string(),
+      media: v.optional(v.string()),
+      response: v.string(),
+    }),
+    plays: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const gameExists = await ctx.db
+      .query("archiveGames")
+      .filter((q) => q.eq(q.field("title"), args.title))
+      .first();
+    if (gameExists || gameExists === args) {
+      return gameExists;
+    }
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError(
+        "Unauthorized" + 401 + "You must be signed in to create a clue."
+      );
+    }
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), identity?.email))
+      .first();
+
+    const gameId: Id<"archiveGames"> = await ctx.db.insert("archiveGames", {
+      title: args.title,
+      airDate: args.airDate,
+      complete: args.complete,
+      jeopardy: args.jeopardy,
+      doubleJeopardy: args.doubleJeopardy,
+      finalJeopardy: args.finalJeopardy,
+      plays: args.plays!,
+    });
+    const ret = await ctx.db.get(gameId);
+    return ret;
+  },
+});
+
+export const getCreatedGameById = query({
+  args: { gameId: v.id("createdGames") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.gameId);
   },

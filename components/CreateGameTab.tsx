@@ -5,32 +5,102 @@ import {
   CreateGameDataContext,
   CreateGameObjectContextType,
 } from "./CreateGameDataContext";
-import { ChangeEvent, useContext } from "react";
+import { useContext, useState } from "react";
 import BoardSquare from "./BoardSquare";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
+import { Category, CreatedCategory } from "@/types";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { HoverBorderGradient } from "./ui/hover-border-gradient";
+import { Loader2 } from "lucide-react";
 
 const CreateGameTab = ({
   activeTab = "jeopardy",
 }: {
   activeTab: "jeopardy" | "doubleJeopardy" | "finalJeopardy";
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createClues = useMutation(api.clues.createClues);
+  const createCategory = useMutation(api.categories.createCategory);
+  const createBoard = useMutation(api.boards.createBoard);
+  const createGame = useMutation(api.games.createGame);
+
   const {
     gameObject,
     updateTitle,
-    updateCreator,
     updateFinalJeopardyCategory,
     updateFinalJeopardyClue,
     updateFinalJeopardyMedia,
     updateFinalJeopardyResponse,
   } = useContext(CreateGameDataContext) as CreateGameObjectContextType;
+
+  async function uploadGameToDatabase() {
+    try {
+      if (gameObject === null) return;
+      setIsLoading(true);
+
+      const createdCategories: CreatedCategory[] = [];
+      for (const category of gameObject.jeopardy) {
+        const createdClues = await createClues({
+          clues: category.clues,
+        });
+        const createdCategory = await createCategory({
+          categoryName: category.categoryName,
+          clues: createdClues.map((clue) => clue._id),
+        });
+        createdCategories.push(createdCategory);
+      }
+
+      const createdDoubleCategories: CreatedCategory[] = [];
+      for (const category of gameObject.doubleJeopardy) {
+        const createdClues = await createClues({
+          clues: category.clues,
+        });
+        const createdCategory = await createCategory({
+          categoryName: category.categoryName,
+          clues: createdClues.map((clue) => clue._id),
+        });
+        createdDoubleCategories.push(createdCategory);
+      }
+
+      const createdJeopardyBoard = await createBoard({
+        board: createdCategories.map((category) => category._id),
+      });
+
+      const createdDoubleJeopardyBoard = await createBoard({
+        board: createdDoubleCategories.map((category) => category._id),
+      });
+
+      const createdGame = await createGame({
+        title: gameObject.title,
+        jeopardy: createdJeopardyBoard._id,
+        doubleJeopardy: createdDoubleJeopardyBoard._id,
+        finalJeopardy: {
+          category: gameObject.finalJeopardy.category,
+          clue: gameObject.finalJeopardy.clue,
+          media: gameObject.finalJeopardy.media,
+          response: gameObject.finalJeopardy.response,
+        },
+        plays: gameObject.plays,
+      });
+
+      console.log("Game uploaded successfully!");
+      setIsLoading(false);
+    } catch (error) {
+      console.log("Game upload failed: ", error);
+      setIsLoading(false);
+    }
+  }
+
   return (
     <>
       {activeTab === "jeopardy" || activeTab === "doubleJeopardy" ? (
         <Card className="board-grid border-black-0 bg-blue-700 border-2">
-          {gameObject[activeTab].map((value, index) => (
+          {gameObject[activeTab].map((value: Category, index: number) => (
             <>
               <BoardSquare
                 type="category"
@@ -156,9 +226,22 @@ const CreateGameTab = ({
                   onChange={(e) => updateFinalJeopardyMedia(e.target.value)}
                 />
               </div>
-              <Button className="w-full h-16 bg-clue-gradient border-black-0 border-3 text-3xl text-shadow-h">
-                Submit Created Game
-              </Button>
+
+              <HoverBorderGradient
+                containerClassName="rounded-full"
+                as="button"
+                className="flex bg-clue-gradient items-center text-white"
+                onClick={uploadGameToDatabase}
+              >
+                {isLoading ? (
+                  <>
+                    Uploading...&nbsp;
+                    <Loader2 size={20} color="white" className="animate-spin" />
+                  </>
+                ) : (
+                  "Upload Game"
+                )}
+              </HoverBorderGradient>
             </div>
           </div>
         </Card>

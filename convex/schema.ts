@@ -5,6 +5,7 @@ export default defineSchema({
   archiveGames: defineTable({
     title: v.string(),
     airDate: v.string(),
+    complete: v.boolean(),
     jeopardy: v.id("boards"),
     doubleJeopardy: v.id("boards"),
     finalJeopardy: v.object({
@@ -32,33 +33,26 @@ export default defineSchema({
     }),
     plays: v.number(),
   })
-    .index("by_date", ["_creationTime"])
     .index("by_plays", ["plays"])
     .index("by_creator", ["creator"])
     .index("by_title", ["title"]),
 
   boards: defineTable({
-    category1: v.id("categories"),
-    category2: v.id("categories"),
-    category3: v.id("categories"),
-    category4: v.id("categories"),
-    category5: v.id("categories"),
-    category6: v.id("categories"),
+    categories: v.array(v.id("categories")),
   }),
 
   categories: defineTable({
     categoryName: v.string(),
-    clue1: v.id("clues"),
-    clue2: v.id("clues"),
-    clue3: v.id("clues"),
-    clue4: v.id("clues"),
-    clue5: v.id("clues"),
+    clues: v.array(v.id("clues")),
   }).index("by_category", ["categoryName"]),
+
   clues: defineTable({
     clue: v.string(),
     media: v.optional(v.string()),
+    double: v.optional(v.boolean()),
     response: v.string(),
     value: v.number(),
+    creator: v.id("users"),
   })
     .index("by_clue", ["clue"])
     .index("by_value", ["value"]),

@@ -28,6 +28,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
         clerkId: event.data.id,
         imageUrl: event.data.image_url,
         email: event.data.email_addresses[0].email_address,
+        name: event.data.first_name!,
       });
       break;
     case "user.deleted":

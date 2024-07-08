@@ -1,25 +1,34 @@
 import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
+import { CreatedCategory } from "@/types";
+import { Id } from "./_generated/dataModel";
 
 export const createCategory = mutation({
   args: {
     categoryName: v.string(),
-    clue1: v.id("clues"),
-    clue2: v.id("clues"),
-    clue3: v.id("clues"),
-    clue4: v.id("clues"),
-    clue5: v.id("clues"),
+    clues: v.array(v.id("clues")),
   },
   handler: async (ctx, args) => {
-    await ctx.db.insert("categories", {
+    const catExists = await ctx.db
+      .query("categories")
+      .filter((q) => q.eq(q.field("clues"), args.clues))
+      .first();
+    if (catExists) {
+      return catExists as CreatedCategory;
+    }
+    const catId: Id<"categories"> = await ctx.db.insert("categories", {
       categoryName: args.categoryName,
-      clue1: args.clue1,
-      clue2: args.clue2,
-      clue3: args.clue3,
-      clue4: args.clue4,
-      clue5: args.clue5,
+      clues: args.clues,
     });
+    const ret: CreatedCategory | null = await ctx.db
+      .query("categories")
+      .filter((q) => q.eq(q.field("_id"), catId))
+      .first();
+    if (!ret) {
+      throw new ConvexError("Invalid category, Could not create category");
+    }
+    return ret;
   },
 });
 

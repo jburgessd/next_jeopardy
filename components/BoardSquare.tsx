@@ -4,14 +4,11 @@ import {
   CreateGameDataContext,
   CreateGameObjectContextType,
 } from "./CreateGameDataContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
-import CustomInput from "./CustomInput";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { set } from "react-hook-form";
 
 const BoardSquare = ({
   type = "clue",
@@ -56,7 +53,6 @@ const BoardSquare = ({
   const handleCloseAutoFocus = () => {
     if (type === "category") {
       if (gameObject[activeTab][col].categoryName !== "") setIsFilled(true);
-      return true;
     } else {
       if (clue !== "" && response !== "") {
         setIsFilled(true);
@@ -97,7 +93,7 @@ const BoardSquare = ({
       </PopoverTrigger>
       <PopoverContent
         className="font-swiss911 text-shadow-h pop-up w-[20vw] bg-pop-up-gradient border-black-0 border-2"
-        onCloseAutoFocus={() => handleCloseAutoFocus()}
+        onCloseAutoFocus={handleCloseAutoFocus}
       >
         <div className="grid gap-4">
           <div className="space-y-2">

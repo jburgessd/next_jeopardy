@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 
+import { Id } from "@/convex/_generated/dataModel";
+
 declare type SearchParamProps = {
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
@@ -7,16 +9,54 @@ declare type SearchParamProps = {
 
 // ========================================
 
+declare interface CreateGameObject {
+  title: string;
+  airDate?: Date;
+  creator?: string;
+  jeopardy: Category[];
+  doubleJeopardy: Category[];
+  finalJeopardy: {
+    category: string;
+    clue: string;
+    media?: string;
+    response: string;
+  };
+  plays?: number;
+}
+
 declare interface Clue {
   clue: string;
-  media: string;
+  media?: string;
   response: string;
   value: number;
+}
+
+declare interface CreatedClue {
+  clue: string;
+  media?: string;
+  response: string;
+  value: number;
+  _id: Id<"clues">;
+  _creationTime: number;
+  creator: Id<"users">;
 }
 
 declare interface Category {
   categoryName: string;
   clues: Clue[];
+}
+
+declare interface CreatedCategory {
+  categoryName: string;
+  clues: Id<"clues">[];
+  _id: Id<"categories">;
+  _creationTime: number;
+}
+
+declare interface CreatedBoard {
+  categories: Id<"categories">[];
+  _id: Id<"boards">;
+  _creationTime: number;
 }
 
 declare interface HostGameProps {

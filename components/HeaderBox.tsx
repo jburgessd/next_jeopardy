@@ -1,5 +1,6 @@
 "use client";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { HeaderBoxProps } from "@/types";
 
 const HeaderBox = ({
   type = "title",

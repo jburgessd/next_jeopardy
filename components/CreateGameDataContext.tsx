@@ -1,24 +1,11 @@
 "use client";
 import { gameTemplate } from "@/constants";
+import { Clue, CreateGameObject } from "@/types";
 import { ReactNode, createContext, useState } from "react";
-
-interface CreateGameObject {
-  title: string;
-  airDate?: Date;
-  creator: string;
-  jeopardy: Category[];
-  doubleJeopardy: Category[];
-  finalJeopardy: {
-    category: string;
-    clue: string;
-    media: string;
-    response: string;
-  };
-  plays?: number;
-}
 
 export type CreateGameObjectContextType = {
   gameObject: CreateGameObject;
+  objectIsVerified: boolean;
   updateTitle: (title: string) => void;
   updateCreator: (creator: string) => void;
   updateJeopardyClue: (
@@ -43,6 +30,7 @@ export type CreateGameObjectContextType = {
   updateFinalJeopardyClue: (clue: string) => void;
   updateFinalJeopardyMedia: (media: string) => void;
   updateFinalJeopardyResponse: (response: string) => void;
+  verifyGameObject: () => (boolean | string)[];
 };
 
 export const CreateGameDataContext =
@@ -52,6 +40,7 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [gameObject, setGameObject] = useState<CreateGameObject>(gameTemplate);
+  const [objectIsVerified, setObjectIsVerified] = useState(false);
 
   const updateTitle = (title: string) => {
     setGameObject((prevState) => ({ ...prevState, title }));
@@ -149,10 +138,62 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  const verifyGameObject = () => {
+    if (gameObject === null) {
+      return [objectIsVerified, "Game object is null"];
+    }
+    if (gameObject.title === "" || gameObject.creator === "") {
+      return [objectIsVerified, "Title or Creator is empty"];
+    }
+    if (
+      gameObject.jeopardy.length !== 6 ||
+      gameObject.doubleJeopardy.length !== 6
+    ) {
+      return [objectIsVerified, "Jeopardy board is missing categories"];
+    }
+    if (
+      gameObject.jeopardy.some(
+        (category) =>
+          category.clues.length !== 5 || category.categoryName === ""
+      ) ||
+      gameObject.doubleJeopardy.some(
+        (category) =>
+          category.clues.length !== 5 || category.categoryName === ""
+      )
+    ) {
+      return [objectIsVerified, "Jeopardy category is missing clues"];
+    }
+    if (
+      gameObject.finalJeopardy.category === "" ||
+      gameObject.finalJeopardy.clue === "" ||
+      gameObject.finalJeopardy.media === "" ||
+      gameObject.finalJeopardy.response === ""
+    ) {
+      return [objectIsVerified, "Final Jeopardy category is missing data"];
+    }
+    for (const category of gameObject.jeopardy) {
+      if (
+        category.clues.some((clue) => clue.clue === "" || clue.response === "")
+      ) {
+        return [objectIsVerified, "Jeopardy clue is missing data"];
+      }
+    }
+    for (const category of gameObject.doubleJeopardy) {
+      if (
+        category.clues.some((clue) => clue.clue === "" || clue.response === "")
+      ) {
+        return [objectIsVerified, "Double Jeopardy clue is missing data"];
+      }
+    }
+    setObjectIsVerified(true);
+    return [objectIsVerified, "Game object is verified"];
+  };
+
   return (
     <CreateGameDataContext.Provider
       value={{
         gameObject,
+        objectIsVerified,
         updateTitle,
         updateCreator,
         updateJeopardyClue,
@@ -163,6 +204,7 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
         updateFinalJeopardyClue,
         updateFinalJeopardyMedia,
         updateFinalJeopardyResponse,
+        verifyGameObject,
       }}
     >
       {children}

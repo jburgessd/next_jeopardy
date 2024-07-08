@@ -21,6 +21,11 @@ export const sidebarLinks = [
     route: "/create-game",
     label: "Create Game",
   },
+  {
+    imgURL: "/icons/upload.png",
+    route: "/upload-game",
+    label: "Upload Game",
+  },
 ];
 
 export const gameTemplate = {

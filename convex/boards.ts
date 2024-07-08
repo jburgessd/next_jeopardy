@@ -1,25 +1,43 @@
 import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 export const createBoard = mutation({
   args: {
-    category1: v.id("categories"),
-    category2: v.id("categories"),
-    category3: v.id("categories"),
-    category4: v.id("categories"),
-    category5: v.id("categories"),
-    category6: v.id("categories"),
+    board: v.array(v.id("categories")),
   },
   handler: async (ctx, args) => {
-    await ctx.db.insert("boards", {
-      category1: args.category1,
-      category2: args.category2,
-      category3: args.category3,
-      category4: args.category4,
-      category5: args.category5,
-      category6: args.category6,
+    if (args.board.length !== 6) {
+      throw new ConvexError(
+        "Invalid board, There must be 6 categories in a board"
+      );
+    }
+    const boardExists = await ctx.db
+      .query("boards")
+      .filter((q) => q.eq(q.field("categories"), args.board))
+      .first();
+    if (boardExists) {
+      return boardExists;
+    }
+    const boardId: Id<"boards"> = await ctx.db.insert("boards", {
+      categories: [
+        args.board[0],
+        args.board[1],
+        args.board[2],
+        args.board[3],
+        args.board[4],
+        args.board[5],
+      ],
     });
+    if (!boardId) {
+      throw new ConvexError("Invalid board, Could not create board");
+    }
+    const ret = await ctx.db.get(boardId);
+    if (!ret) {
+      throw new ConvexError("Invalid board, Could not create board");
+    }
+    return ret;
   },
 });
 
