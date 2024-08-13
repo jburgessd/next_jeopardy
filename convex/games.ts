@@ -51,7 +51,6 @@ export const createGame = mutation({
 export const archiveGame = mutation({
   args: {
     title: v.string(),
-    complete: v.boolean(),
     airDate: v.string(),
     jeopardy: v.id("boards"),
     doubleJeopardy: v.id("boards"),
@@ -85,7 +84,6 @@ export const archiveGame = mutation({
     const gameId: Id<"archiveGames"> = await ctx.db.insert("archiveGames", {
       title: args.title,
       airDate: args.airDate,
-      complete: args.complete,
       jeopardy: args.jeopardy,
       doubleJeopardy: args.doubleJeopardy,
       finalJeopardy: args.finalJeopardy,

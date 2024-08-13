@@ -38,7 +38,7 @@ const Home = () => {
             Welcome to <br /> Host Jeopardy!
           </p>
         </div>
-        <div className="basis-1/2">
+        <div className="basis-1/2 justify-center items-center p-8 mt-8">
           <Card className="max-w-[65%] bg-clue-gradient rounded-lg">
             <CardHeader>
               <CardTitle className="text-3xl text-white">

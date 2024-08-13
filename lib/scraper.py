@@ -32,6 +32,14 @@ def get_soup(game_id):
     else:
         return -1
     
+def check_media_soup(url):
+    page = requests.get(url).text
+    soup = BeautifulSoup(page, 'html.parser')
+    not_found = soup.find('title').text
+    if("404" in not_found):
+        return False
+    return True
+
 def get_title(soup):
     ret = soup.find('div', {"id": "game_title"}).text
     title = ret.split(" - ")[0]
@@ -188,15 +196,22 @@ def set_clue_arr(clues, media, question, dd, mult):
             })
     return clue_arr
 
-def verifyFullGame(obj):
+def check_media_exists(media):
+    if(media == ""):
+        return True
+    return check_media_soup(media)
+
+def verify_full_game(obj):
     for cat in obj["jeopardy"]:
         for clue in cat["clues"]:
             if(clue["clue"] == ""):
                 return False
+            return check_media_exists(clue["media"])
     for cat in obj["doubleJeopardy"]:
         for clue in cat["clues"]:
             if(clue["clue"] == ""):
                 return False
+            return check_media_exists(clue["media"])
     return True
 
 def print_out_game(obj):
@@ -247,7 +262,7 @@ if __name__ == "__main__":
       }
   }
 
-  game_obj["complete"] = verifyFullGame(game_obj)
+  game_obj["complete"] = verify_full_game(game_obj)
 
   print_out_game(game_obj)
   # write_game_to_file(game_obj)

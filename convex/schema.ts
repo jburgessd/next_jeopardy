@@ -5,7 +5,6 @@ export default defineSchema({
   archiveGames: defineTable({
     title: v.string(),
     airDate: v.string(),
-    complete: v.boolean(),
     jeopardy: v.id("boards"),
     doubleJeopardy: v.id("boards"),
     finalJeopardy: v.object({

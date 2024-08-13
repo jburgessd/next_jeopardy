@@ -11,8 +11,9 @@ declare type SearchParamProps = {
 
 declare interface CreateGameObject {
   title: string;
-  airDate?: Date;
+  airDate?: string;
   creator?: string;
+  complete?: boolean;
   jeopardy: Category[];
   doubleJeopardy: Category[];
   finalJeopardy: {
@@ -99,6 +100,11 @@ declare type NewUserParams = {
 declare type Account = {
   id: string;
   name: string;
+};
+
+declare type ArchiveLists = {
+  text: string;
+  href: string;
 };
 
 declare interface HeaderBoxProps {
