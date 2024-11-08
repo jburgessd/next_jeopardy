@@ -20,6 +20,7 @@ import type * as clues from "../clues.js";
 import type * as crons from "../crons.js";
 import type * as games from "../games.js";
 import type * as http from "../http.js";
+import type * as lobbies from "../lobbies.js";
 import type * as users from "../users.js";
 
 /**
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   games: typeof games;
   http: typeof http;
+  lobbies: typeof lobbies;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

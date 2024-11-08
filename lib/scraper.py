@@ -20,8 +20,8 @@ game_obj = {
     "plays": 0,
 }
 
-def get_soup(game_id):
-    url = "https://j-archive.com/showgame.php?game_id=" + str(game_id)
+def get_soup(game: str):
+    url = "https://j-archive.com/" + game
     page = requests.get(url).text
     soup = BeautifulSoup(page, 'html.parser')
     thing = soup.find('p', {"class": "error"})

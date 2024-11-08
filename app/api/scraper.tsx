@@ -3,7 +3,6 @@ import { ArchiveLists } from "@/types";
 import { parse } from "node-html-parser";
 
 export async function getInfoArray(link: string | null) {
-  console.log(link);
   const res =
     link === null
       ? await fetch("https://j-archive.com/listseasons.php")

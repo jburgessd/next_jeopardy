@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
-import { Spotlight } from "@/components/ui/spotlight";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -28,10 +27,6 @@ const Home = () => {
           <Link href="/sign-in">Sign In</Link>
         </Button>
       </div>
-      <Spotlight
-        className="-top-10 left-0 md:left-40 md:-top-40"
-        fill="white"
-      />
       <div className="flex flex-row z-20">
         <div className="basis-1/2 justify-content-right text-right p-8">
           <p className="hero-text">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Command,
@@ -22,7 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Control, FieldPath, UseFormReturn } from "react-hook-form";
+import { Control, FieldPath, UseFormSetValue } from "react-hook-form";
 import { ArchiveSchema, cn } from "@/lib/utils";
 import { z } from "zod";
 import { ArchiveLists } from "@/types";
@@ -31,7 +31,7 @@ import { Button } from "./ui/button";
 const formSchema = ArchiveSchema("");
 
 interface HostFormFieldProps {
-  form: UseFormReturn<z.infer<typeof formSchema>>;
+  setValue: UseFormSetValue<z.infer<typeof formSchema>>;
   control: Control<z.infer<typeof formSchema>>;
   name: FieldPath<z.infer<typeof formSchema>>;
   label: string;
@@ -39,11 +39,10 @@ interface HostFormFieldProps {
   empty: string;
   description: string;
   list: ArchiveLists[];
-  setListItem: (item: ArchiveLists) => void;
 }
 
 const HostFormControl = ({
-  form,
+  setValue,
   control,
   name,
   label,
@@ -51,10 +50,14 @@ const HostFormControl = ({
   empty,
   description,
   list,
-  setListItem,
 }: HostFormFieldProps) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [selected, setSelected] = useState("");
+
+  const setSelectedValue = (value: string) => {
+    setValue(name, value);
+  };
+
   return (
     <FormField
       control={control}
@@ -71,11 +74,11 @@ const HostFormControl = ({
                   aria-expanded={open}
                   className={cn(
                     "justify-between bg-clue-gradient border-black-0 border-2 text-white-0",
-                    !value && "text-muted-foreground"
+                    !selected && "text-muted-foreground"
                   )}
                 >
-                  {value
-                    ? list.find((li) => li.text === value)?.text
+                  {selected
+                    ? list.find((li) => li.text === selected)?.text
                     : placeholder}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-100" />
                 </Button>
@@ -93,17 +96,15 @@ const HostFormControl = ({
                         key={li.text}
                         className="font-korinna hover:bg-slate-400 hover:bg-opacity-20 hover:cursor-pointer"
                         onSelect={(currList) => {
-                          setListItem(
-                            currList === value ? { text: "", href: "" } : li
-                          );
-                          setValue(currList === value ? "" : currList);
+                          setSelectedValue(li.href);
+                          setSelected(currList === selected ? "" : currList);
                           setOpen(false);
                         }}
                       >
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            li.text === value ? "opacity-100" : "opacity-0"
+                            li.text === selected ? "opacity-100" : "opacity-0"
                           )}
                         />
                         {li.text}

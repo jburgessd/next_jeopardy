@@ -19,6 +19,23 @@ export default defineSchema({
     .index("by_title", ["title"])
     .index("by_plays", ["plays"]),
 
+  lobbies: defineTable({
+    host: v.id("users"),
+    players: v.array(
+      v.object({
+        _id: v.id("users"),
+        name: v.string(),
+        score: v.number(),
+      })
+    ),
+    game: v.id("createdGames") || v.string(),
+    status: v.string(),
+    gameId: v.string(),
+    hostGameName: v.string(),
+  })
+    .index("by_host", ["host"])
+    .index("by_game", ["game"]),
+
   createdGames: defineTable({
     title: v.string(),
     creator: v.id("users"),

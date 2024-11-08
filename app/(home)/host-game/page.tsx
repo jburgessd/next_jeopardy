@@ -2,44 +2,59 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { HostGameProps, ArchiveLists } from "@/types";
+import { ArchiveLists } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { getInfoArray } from "@/app/api/scraper";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 
-import { ArchiveSchema, cn } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
+import { ArchiveSchema } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import HostFormControl from "@/components/HostFormControl";
 
 const archiveFormSchema = ArchiveSchema("");
+type ArchiveFormData = z.infer<typeof archiveFormSchema>;
 
-const Home = ({ user }: HostGameProps) => {
+const Home = () => {
   const [seasons, setSeasons] = useState<ArchiveLists[]>([]);
   const [episodes, setEpisodes] = useState<ArchiveLists[]>([]);
   const [createdGame, setCreatedGame] = useState(false);
-  const [selectedSeason, setSelectedSeason] = useState({
-    text: "",
-    href: "",
-  });
-  const [selectedEpisode, setSelectedEpisode] = useState({
-    text: "",
-    href: "",
-  });
 
-  const archiveForm = useForm<z.infer<typeof archiveFormSchema>>({
+  const router = useRouter();
+
+  const methods = useForm<ArchiveFormData>({
     resolver: zodResolver(archiveFormSchema),
     defaultValues: {
-      season: "",
-      episode: "",
-      gameName: "",
+      base: "",
+      game: "",
+      gameId: "",
       hostGameName: "",
       players: 0,
     },
   });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue,
+    watch,
+  } = methods;
+
+  const gameIdValue = watch("gameId");
+  const baseValue = watch("base");
+  const gameValue = watch("game");
 
   useEffect(() => {
     const getSeasons = async () => {
@@ -56,40 +71,26 @@ const Home = ({ user }: HostGameProps) => {
   useEffect(() => {
     const getEpisodes = async () => {
       try {
-        const res = await getInfoArray(selectedSeason.href);
+        const res = await getInfoArray(baseValue!);
         setEpisodes(res);
       } catch (error) {
         console.log(error);
       }
     };
     setEpisodes([]);
-    setSelectedEpisode({ text: "", href: "" });
-    if (selectedSeason.href !== "") {
+    if (baseValue !== "") {
       getEpisodes();
     }
-  }, [selectedSeason]);
+  }, [baseValue]);
 
-  const onArchiveSubmit = (data: z.infer<typeof archiveFormSchema>) => {
-    console.log("SUBMIT");
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  };
+  const onArchiveSubmit = async (data: ArchiveFormData) => {
+    console.log(data);
+    // Check if the gameId is not taken in the db
 
-  const onCreatedSubmit = (data: z.infer<typeof archiveFormSchema>) => {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    // Create an active game in the db
+
+    // Go to the game page
+    router.push(`/lobby/${gameIdValue}`);
   };
 
   return (
@@ -112,38 +113,80 @@ const Home = ({ user }: HostGameProps) => {
           {createdGame ? (
             <></>
           ) : (
-            <Form {...archiveForm}>
+            <Form {...methods}>
               <form
-                onSubmit={archiveForm.handleSubmit(onArchiveSubmit)}
+                onSubmit={handleSubmit(onArchiveSubmit)}
                 className="space-y-6"
               >
-                <HostFormControl
-                  form={archiveForm}
-                  control={archiveForm.control}
-                  name="season"
-                  label="Seasons"
-                  placeholder="Select a Season"
-                  empty="No Seasons..."
-                  description="Select from any aired Season of 'Jeopardy!'"
-                  list={seasons}
-                  setListItem={setSelectedSeason}
-                />
-                {selectedSeason.href !== "" ? (
+                <FormItem>
+                  <FormLabel>Game Name</FormLabel>
+                  <FormControl className="text-black-0">
+                    <Input
+                      {...register("hostGameName")}
+                      placeholder="Enter Game Name"
+                      maxLength={25}
+                      aria-invalid={!!errors.hostGameName}
+                    />
+                  </FormControl>
+                  {errors.hostGameName && (
+                    <FormMessage>{errors.hostGameName.message}</FormMessage>
+                  )}
+                </FormItem>
+                <FormItem>
                   <HostFormControl
-                    form={archiveForm}
-                    control={archiveForm.control}
-                    name="episode"
-                    label="Episodes"
-                    placeholder="Select an Episode"
-                    empty="No Episodes..."
-                    description="Select from any aired Episode of 'Jeopardy!'"
-                    list={episodes}
-                    setListItem={setSelectedEpisode}
+                    setValue={setValue}
+                    control={control}
+                    name="base"
+                    label="Seasons"
+                    placeholder="Select a Season"
+                    empty="No Seasons..."
+                    description="Select from any aired Season of 'Jeopardy!'"
+                    list={seasons}
                   />
+                  {baseValue !== "" ? (
+                    <HostFormControl
+                      setValue={setValue}
+                      control={control}
+                      name="game"
+                      label="Episodes"
+                      placeholder="Select an Episode"
+                      empty="No Episodes..."
+                      description="Select from any aired Episode of 'Jeopardy!'"
+                      list={episodes}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </FormItem>
+                {gameValue !== "" ? (
+                  <FormItem>
+                    <FormLabel>Game ID</FormLabel>
+                    <FormControl className="text-black-0">
+                      <Input
+                        {...register("gameId")}
+                        placeholder="Enter 4-character Game ID"
+                        maxLength={4}
+                        aria-invalid={!!errors.gameId}
+                      />
+                    </FormControl>
+                    {errors.gameId && (
+                      <FormMessage>{errors.gameId.message}</FormMessage>
+                    )}
+                  </FormItem>
                 ) : (
                   <></>
                 )}
-                <Button type="submit">Submit</Button>
+                <Button
+                  type="submit"
+                  disabled={!methods.formState.isValid}
+                  className={
+                    methods.formState.isValid
+                      ? "flex rounded-full bg-clue-gradient border-black-0 border-2 items-center text-white"
+                      : "flex rounded-full bg-gray-500 border-black-0 border-2 items-center text-white opacity-50"
+                  }
+                >
+                  Host Game
+                </Button>
               </form>
             </Form>
           )}
