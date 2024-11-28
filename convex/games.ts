@@ -94,6 +94,18 @@ export const archiveGame = mutation({
   },
 });
 
+export const getCreatedGames = query({
+  handler: async (ctx) => {
+    const games = await ctx.db.query("createdGames").collect();
+    if (games.length === 0) {
+      throw new ConvexError(
+        "No games found" + 404 + "No games found in the database."
+      );
+    }
+    return games;
+  },
+});
+
 export const getCreatedGameById = query({
   args: { gameId: v.id("createdGames") },
   handler: async (ctx, args) => {

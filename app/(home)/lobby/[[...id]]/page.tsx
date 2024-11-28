@@ -4,12 +4,70 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 
 export default function LobbyPage() {
   const router = useRouter();
   const [players, setPlayers] = useState<any[]>([]);
   const [host, setHost] = useState<any>(null);
+
+  const { user, isLoaded } = useUser();
+  if (!isLoaded || !user) {
+    router.push("/");
+  }
+
+  useEffect(() => {
+    // const fetchPlayers = async () => {
+    //   const players = await api.lobbies.getPlayers();
+    //   setPlayers(players);
+    // };
+    // fetchPlayers();
+    const dev_players = [
+      {
+        _id: user?.id + "_1",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_2",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_3",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_4",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_5",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_6",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_7",
+        name: user?.username,
+        score: 0,
+      },
+      {
+        _id: user?.id + "_8",
+        name: user?.username,
+        score: 0,
+      },
+    ];
+    setPlayers(dev_players);
+  }, []);
 
   return (
     <section className="home">
@@ -22,11 +80,9 @@ export default function LobbyPage() {
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={player.avatar} />
-                    <AvatarFallback>{player.name[0]}</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">{player.name}</p>
-                    <p className="text-sm text-muted-foreground">Player</p>
                   </div>
                 </div>
               </Card>

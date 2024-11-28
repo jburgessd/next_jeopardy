@@ -1,7 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import Image from "next/image";
-import CreateGameDataProvider from "@/components/CreateGameDataContext";
 
 export default function RootLayout({
   children,

@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { create } from "domain";
 
 export const createLobby = mutation({
   args: {
@@ -13,7 +14,21 @@ export const createLobby = mutation({
         score: v.number(),
       })
     ),
-    game: v.id("createdGames") || v.string(),
+    game: v.string() || v.id("createdGames"),
+    timer: v.number(),
+    finalTimer: v.number(),
+    update: v.object({
+      clue: v.string(), // 'J,2,4' means Single Jeopardy, Category 2 out of 6, Clue 4 out of 5
+      timerStart: v.boolean(),
+      activeBuzz: v.boolean(),
+      buzzIn: v.array(v.id("users")),
+      prevBuzz: v.array(v.id("users")),
+    }),
+    boardState: v.object({
+      jeopardy: v.string(),
+      doubleJeopardy: v.string(),
+      finalJeopardy: v.string(),
+    }),
     status: v.string(),
     gameId: v.string(),
     hostGameName: v.string(),
@@ -45,7 +60,21 @@ export const createLobby = mutation({
       game: args.game,
       status: args.status,
       gameId: args.gameId,
+      timer: 6,
+      finalTimer: 30,
       hostGameName: args.hostGameName,
+      update: {
+        clue: "",
+        timerStart: false,
+        activeBuzz: false,
+        buzzIn: [],
+        prevBuzz: [],
+      },
+      boardState: {
+        jeopardy: "000000",
+        doubleJeopardy: "000000",
+        finalJeopardy: "00",
+      },
     });
 
     const ret = await ctx.db.get(lobbyId);
@@ -68,6 +97,11 @@ export const updateLobby = mutation({
     status: v.string(),
     gameId: v.string(),
     hostGameName: v.string(),
+    board: v.object({
+      jeopardy: v.string(),
+      doubleJeopardy: v.string(),
+      finalJeopardy: v.string(),
+    }),
   },
   handler: async (ctx, args) => {
     const lobby = await ctx.db.get(args.lobbyId);
@@ -102,7 +136,22 @@ export const updateLobby = mutation({
       status: args.status,
       gameId: args.gameId,
       hostGameName: args.hostGameName,
+      boardState: args.board,
     });
+  },
+});
+
+export const checkForExistingLobby = mutation({
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    const lobby = await ctx.db
+      .query("lobbies")
+      .filter((q) => q.eq(q.field("gameId"), args.gameId))
+      .first();
+    if (lobby) {
+      return true;
+    }
+    return false;
   },
 });
 
@@ -119,6 +168,14 @@ export const getLobbyById = query({
   args: { lobbyId: v.id("lobbies") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.lobbyId);
+  },
+});
+
+export const getIdleLobbies = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("lobbies")
+      .filter((q) => q.eq(q.field("status"), "setup"));
   },
 });
 

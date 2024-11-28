@@ -28,10 +28,24 @@ export default defineSchema({
         score: v.number(),
       })
     ),
-    game: v.id("createdGames") || v.string(),
+    game: v.string() || v.id("createdGames"),
+    timer: v.number(),
+    finalTimer: v.number(),
     status: v.string(),
     gameId: v.string(),
     hostGameName: v.string(),
+    update: v.object({
+      clue: v.string(), // 'J,2,4' means Single Jeopardy, Category 2 out of 6, Clue 4 out of 5
+      timerStart: v.boolean(),
+      activeBuzz: v.boolean(),
+      buzzIn: v.array(v.id("users")),
+      prevBuzz: v.array(v.id("users")),
+    }),
+    boardState: v.object({
+      jeopardy: v.string(),
+      doubleJeopardy: v.string(),
+      finalJeopardy: v.string(),
+    }),
   })
     .index("by_host", ["host"])
     .index("by_game", ["game"]),
