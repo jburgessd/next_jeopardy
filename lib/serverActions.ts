@@ -1,7 +1,7 @@
 "use server";
 
 import { api } from "@/convex/_generated/api";
-import { CreatedCategory, CreateGameObject } from "@/types";
+import { CreatedCategory, CreateGameObject } from "@/types/global";
 import { useMutation } from "convex/react";
 
 const { exec } = require("node:child_process");

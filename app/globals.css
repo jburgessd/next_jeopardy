@@ -51,14 +51,29 @@
 }
 
 .text-shadow-h {
-  text-shadow:
-    0.05vh 0.05vh #000,
-    0.1vh 0.1vh #000,
-    0.15vh 0.15vh #000,
-    0.2vh 0.2vh #000,
-    0.25vh 0.25vh #000,
-    0.3vh 0.3vh #000,
-    0.35vh 0.35vh #000;
+  text-shadow: 0.05vh 0.05vh #000, 0.1vh 0.1vh #000, 0.15vh 0.15vh #000,
+    0.2vh 0.2vh #000, 0.25vh 0.25vh #000, 0.3vh 0.3vh #000, 0.35vh 0.35vh #000;
+}
+
+.sidebar-responsive-text {
+  font-size: clamp(0.1rem, 1vw + 0.5vh, 1.5rem);
+}
+
+.clue-responsive-text {
+  font-size: clamp(1rem, 0.8vw + 0.4vh, 2.5rem);
+}
+
+.main-clue-responsive-text {
+  text-transform: uppercase;
+  font-size: clamp(1rem, 2.5vw + 1.25vh, 7rem);
+}
+
+.cat-responsive-text {
+  font-size: clamp(1rem, 1.5vw + 0.75vh, 4rem);
+}
+
+.val-responsive-text {
+  font-size: clamp(1rem, 2.6vw + 1.3vh, 6.5rem);
 }
 
 .category {
@@ -110,16 +125,12 @@
     @apply text-16 placeholder:text-16 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400;
   }
 
-  .grid-background {
-    @apply h-screen w-full bg-black-1 bg-grid-white/[0.2] items-center justify-center;
-  }
-
   .grid-background-gradient {
     @apply absolute pointer-events-none inset-0 z-0 items-center justify-center bg-black-1 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)];
   }
 
   .hero-text {
-    @apply text-5xl sm:text-7xl font-bold relative z-0 bg-clip-text text-transparent bg-gradient-to-t from-neutral-100 to-neutral-300 py-8;
+    @apply text-7xl relative bg-clip-text bg-gradient-to-t from-neutral-100 to-neutral-300 py-8 text-shadow-h;
   }
 
   .sheet-content button {
@@ -185,7 +196,7 @@
 
   /* Footer */
   .footer {
-    @apply flex cursor-pointer items-center justify-between gap-2 py-6;
+    @apply flex cursor-pointer items-center justify-between gap-2 p-6;
   }
 
   .footer_name {
@@ -205,7 +216,7 @@
   }
 
   .footer_image {
-    @apply relative size-5 max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center;
+    @apply relative size-6 max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center;
   }
 
   .footer_image_mobile {
@@ -235,7 +246,7 @@
   }
 
   .home-content {
-    @apply no-scrollbar flex flex-1 w-full h-full flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 xl:max-h-screen xl:overflow-y-scroll;
+    @apply no-scrollbar flex w-full h-full flex-col gap-8;
   }
 
   .home-header {
@@ -291,5 +302,28 @@
 
   .form-link {
     @apply text-14 cursor-pointer font-medium text-bankGradient;
+  }
+}
+
+@layer base {
+  :root {
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }

@@ -10,24 +10,16 @@ import BoardSquare from "./BoardSquare";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
-import { Category, CreatedCategory } from "@/types";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { HoverBorderGradient } from "./ui/hover-border-gradient";
 import { Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const CreateGameTab = ({
-  activeTab = "jeopardy",
+  activeTab = "single",
 }: {
-  activeTab: "jeopardy" | "doubleJeopardy" | "finalJeopardy";
+  activeTab: "single" | "double" | "final";
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-
-  const createClues = useMutation(api.clues.createClues);
-  const createCategory = useMutation(api.categories.createCategory);
-  const createBoard = useMutation(api.boards.createBoard);
-  const createGame = useMutation(api.games.createGame);
 
   const {
     gameObject,
@@ -36,58 +28,42 @@ const CreateGameTab = ({
     updateFinalJeopardyClue,
     updateFinalJeopardyMedia,
     updateFinalJeopardyResponse,
+    verifyGameObject,
   } = useContext(CreateGameDataContext) as CreateGameObjectContextType;
 
-  async function uploadGameToDatabase() {
+  async function saveGameLocally() {
     try {
       if (gameObject === null) return;
       setIsLoading(true);
-
-      const createdCategories: CreatedCategory[] = [];
-      for (const category of gameObject.jeopardy) {
-        const createdClues = await createClues({
-          clues: category.clues,
+      const ver = verifyGameObject();
+      if (!ver[0]) {
+        setIsLoading(false);
+        toast({
+          title: "Error",
+          description: ver[1],
+          variant: "destructive",
         });
-        const createdCategory = await createCategory({
-          categoryName: category.categoryName,
-          clues: createdClues.map((clue) => clue._id),
-        });
-        createdCategories.push(createdCategory);
+        return;
       }
+      // Add functionality to save the game as a JSON
+      const jsonString = JSON.stringify(gameObject, null, 2);
 
-      const createdDoubleCategories: CreatedCategory[] = [];
-      for (const category of gameObject.doubleJeopardy) {
-        const createdClues = await createClues({
-          clues: category.clues,
-        });
-        const createdCategory = await createCategory({
-          categoryName: category.categoryName,
-          clues: createdClues.map((clue) => clue._id),
-        });
-        createdDoubleCategories.push(createdCategory);
-      }
+      // Create a blob with the JSON string and set its type
+      const blob = new Blob([jsonString], { type: "application/json" });
 
-      const createdJeopardyBoard = await createBoard({
-        board: createdCategories.map((category) => category._id),
-      });
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
 
-      const createdDoubleJeopardyBoard = await createBoard({
-        board: createdDoubleCategories.map((category) => category._id),
-      });
+      // Create a temporary anchor element to trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${gameObject.name}.json`; // File name
+      document.body.appendChild(a); // Append to body
+      a.click(); // Trigger click event
+      document.body.removeChild(a); // Remove from body
 
-      const createdGame = await createGame({
-        title: gameObject.title,
-        jeopardy: createdJeopardyBoard._id,
-        doubleJeopardy: createdDoubleJeopardyBoard._id,
-        finalJeopardy: {
-          category: gameObject.finalJeopardy.category,
-          clue: gameObject.finalJeopardy.clue,
-          media: gameObject.finalJeopardy.media,
-          response: gameObject.finalJeopardy.response,
-        },
-        plays: gameObject.plays,
-      });
-
+      // Revoke the object URL to free up memory
+      URL.revokeObjectURL(url);
       console.log("Game uploaded successfully!");
       setIsLoading(false);
     } catch (error) {
@@ -98,7 +74,7 @@ const CreateGameTab = ({
 
   return (
     <>
-      {activeTab === "jeopardy" || activeTab === "doubleJeopardy" ? (
+      {activeTab === "single" || activeTab === "double" ? (
         <Card className="board-grid border-black-0 bg-blue-700 border-2">
           {gameObject[activeTab].map((value: Category, index: number) => (
             <>
@@ -153,9 +129,9 @@ const CreateGameTab = ({
                 <Input
                   id="title"
                   placeholder={
-                    gameObject.title == "" ? "Game Title" : gameObject.title
+                    gameObject.name == "" ? "Game Title" : gameObject.name
                   }
-                  value={gameObject.title}
+                  value={gameObject.name}
                   className="col-span-2 h-16 text-xl text-black-0"
                   onChange={(e) => updateTitle(e.target.value)}
                 />
@@ -168,11 +144,11 @@ const CreateGameTab = ({
                 <Input
                   id="category"
                   placeholder={
-                    gameObject.finalJeopardy.category == ""
+                    gameObject.final.category == ""
                       ? "Final Jeopardy Category"
-                      : gameObject.finalJeopardy.category
+                      : gameObject.final.category
                   }
-                  value={gameObject.finalJeopardy.category}
+                  value={gameObject.final.category}
                   className="col-span-2 h-16 text-xl text-black-0"
                   onChange={(e) => updateFinalJeopardyCategory(e.target.value)}
                 />
@@ -184,11 +160,11 @@ const CreateGameTab = ({
 
                 <Textarea
                   placeholder={
-                    gameObject.finalJeopardy.clue === ""
+                    gameObject.final.clue.answer === ""
                       ? "This is a thing that you write"
-                      : gameObject.finalJeopardy.clue
+                      : gameObject.final.clue.answer
                   }
-                  value={gameObject.finalJeopardy.clue}
+                  value={gameObject.final.clue.answer}
                   className="col-span-2 h-30 text-xl text-black-0"
                   onChange={(e) => updateFinalJeopardyClue(e.target.value)}
                 />
@@ -200,11 +176,11 @@ const CreateGameTab = ({
 
                 <Textarea
                   placeholder={
-                    gameObject.finalJeopardy.response === ""
+                    gameObject.final.clue.question === ""
                       ? "What is a clue?"
-                      : gameObject.finalJeopardy.response
+                      : gameObject.final.clue.question
                   }
-                  value={gameObject.finalJeopardy.response}
+                  value={gameObject.final.clue.question}
                   className="col-span-2 h-30 text-xl text-black-0"
                   onChange={(e) => updateFinalJeopardyResponse(e.target.value)}
                 />
@@ -217,11 +193,11 @@ const CreateGameTab = ({
                 <Input
                   id="media"
                   placeholder={
-                    gameObject.finalJeopardy.media == ""
+                    gameObject.final.clue.media.length === 0
                       ? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                      : gameObject.finalJeopardy.media
+                      : gameObject.final.clue.media[0] || ""
                   }
-                  value={gameObject.finalJeopardy.media}
+                  value={gameObject.final.clue.media}
                   className="col-span-2 h-16 text-xl text-black-0"
                   onChange={(e) => updateFinalJeopardyMedia(e.target.value)}
                 />
@@ -231,15 +207,15 @@ const CreateGameTab = ({
                 containerClassName="rounded-full"
                 as="button"
                 className="flex bg-clue-gradient items-center text-white"
-                onClick={uploadGameToDatabase}
+                onClick={saveGameLocally}
               >
                 {isLoading ? (
                   <>
-                    Uploading...&nbsp;
+                    ...&nbsp;
                     <Loader2 size={20} color="white" className="animate-spin" />
                   </>
                 ) : (
-                  "Upload Game"
+                  "Save Game"
                 )}
               </HoverBorderGradient>
             </div>

@@ -1,10 +1,9 @@
 "use client";
 import { gameTemplate } from "@/constants";
-import { Clue, CreateGameObject } from "@/types";
 import { ReactNode, createContext, useState } from "react";
 
 export type CreateGameObjectContextType = {
-  gameObject: CreateGameObject;
+  gameObject: JeopardyGameObject;
   objectIsVerified: boolean;
   updateTitle: (title: string) => void;
   updateCreator: (creator: string) => void;
@@ -39,7 +38,8 @@ export const CreateGameDataContext =
 const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [gameObject, setGameObject] = useState<CreateGameObject>(gameTemplate);
+  const [gameObject, setGameObject] =
+    useState<JeopardyGameObject>(gameTemplate);
   const [objectIsVerified, setObjectIsVerified] = useState(false);
 
   const updateTitle = (title: string) => {
@@ -58,16 +58,16 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
     setGameObject((prevState) => ({
       ...prevState,
       jeopardy: [
-        ...prevState.jeopardy.slice(0, categoryIndex),
+        ...prevState.single.slice(0, categoryIndex),
         {
-          ...prevState.jeopardy[categoryIndex],
+          ...prevState.single[categoryIndex],
           clues: [
-            ...prevState.jeopardy[categoryIndex].clues.slice(0, clueIndex),
+            ...prevState.single[categoryIndex].clues.slice(0, clueIndex),
             clue,
-            ...prevState.jeopardy[categoryIndex].clues.slice(clueIndex + 1),
+            ...prevState.single[categoryIndex].clues.slice(clueIndex + 1),
           ],
         },
-        ...prevState.jeopardy.slice(categoryIndex + 1),
+        ...prevState.single.slice(categoryIndex + 1),
       ],
     }));
   };
@@ -78,7 +78,7 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   ) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.jeopardy[categoryIndex].categoryName = categoryName;
+      newGameObject.single[categoryIndex].category = categoryName;
       return newGameObject;
     });
   };
@@ -90,7 +90,7 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   ) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.doubleJeopardy[categoryIndex].clues[clueIndex] = clue;
+      newGameObject.double[categoryIndex].clues[clueIndex] = clue;
       return newGameObject;
     });
   };
@@ -101,7 +101,7 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   ) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.doubleJeopardy[categoryIndex].categoryName = categoryName;
+      newGameObject.double[categoryIndex].category = categoryName;
       return newGameObject;
     });
   };
@@ -109,15 +109,15 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   const updateFinalJeopardyCategory = (category: string) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.finalJeopardy.category = category;
+      newGameObject.final.category = category;
       return newGameObject;
     });
   };
 
-  const updateFinalJeopardyClue = (clue: string) => {
+  const updateFinalJeopardyClue = (answer: string) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.finalJeopardy.clue = clue;
+      newGameObject.final.clue.answer = answer;
       return newGameObject;
     });
   };
@@ -125,15 +125,15 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   const updateFinalJeopardyMedia = (media: string) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.finalJeopardy.media = media;
+      newGameObject.final.clue.media = [media];
       return newGameObject;
     });
   };
 
-  const updateFinalJeopardyResponse = (response: string) => {
+  const updateFinalJeopardyResponse = (question: string) => {
     setGameObject((prevState) => {
       const newGameObject = { ...prevState };
-      newGameObject.finalJeopardy.response = response;
+      newGameObject.final.clue.question = question;
       return newGameObject;
     });
   };
@@ -142,45 +142,43 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
     if (gameObject === null) {
       return [objectIsVerified, "Game object is null"];
     }
-    if (gameObject.title === "" || gameObject.creator === "") {
-      return [objectIsVerified, "Title or Creator is empty"];
+    if (gameObject.name === "") {
+      return [objectIsVerified, "Title is empty"];
     }
-    if (
-      gameObject.jeopardy.length !== 6 ||
-      gameObject.doubleJeopardy.length !== 6
-    ) {
+    if (gameObject.single.length !== 6 || gameObject.double.length !== 6) {
       return [objectIsVerified, "Jeopardy board is missing categories"];
     }
     if (
-      gameObject.jeopardy.some(
-        (category) =>
-          category.clues.length !== 5 || category.categoryName === ""
+      gameObject.single.some(
+        (category) => category.clues.length !== 5 || category.category === ""
       ) ||
-      gameObject.doubleJeopardy.some(
-        (category) =>
-          category.clues.length !== 5 || category.categoryName === ""
+      gameObject.double.some(
+        (category) => category.clues.length !== 5 || category.category === ""
       )
     ) {
       return [objectIsVerified, "Jeopardy category is missing clues"];
     }
     if (
-      gameObject.finalJeopardy.category === "" ||
-      gameObject.finalJeopardy.clue === "" ||
-      gameObject.finalJeopardy.media === "" ||
-      gameObject.finalJeopardy.response === ""
+      gameObject.final.category === "" ||
+      gameObject.final.clue.answer === "" ||
+      gameObject.final.clue.question === ""
     ) {
       return [objectIsVerified, "Final Jeopardy category is missing data"];
     }
-    for (const category of gameObject.jeopardy) {
+    for (const category of gameObject.single) {
       if (
-        category.clues.some((clue) => clue.clue === "" || clue.response === "")
+        category.clues.some(
+          (clue) => clue.answer === "" || clue.question === ""
+        )
       ) {
         return [objectIsVerified, "Jeopardy clue is missing data"];
       }
     }
-    for (const category of gameObject.doubleJeopardy) {
+    for (const category of gameObject.double) {
       if (
-        category.clues.some((clue) => clue.clue === "" || clue.response === "")
+        category.clues.some(
+          (clue) => clue.answer === "" || clue.question === ""
+        )
       ) {
         return [objectIsVerified, "Double Jeopardy clue is missing data"];
       }

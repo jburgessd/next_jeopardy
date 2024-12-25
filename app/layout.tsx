@@ -3,8 +3,8 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import ConvexClerkProvider from "@/providers/ConvexClerkProvider";
-import CreateGameDataProvider from "@/components/CreateGameDataContext";
+import { ClerkProvider } from "@clerk/nextjs";
+import { ClientSocketProvider } from "@/providers/ClientSocketProvider";
 
 const korinna = localFont({
   src: "../public/fonts/korinna.otf",
@@ -33,22 +33,44 @@ export const metadata: Metadata = {
   },
 };
 
+// Determine backend URL based on environment
+const resolvedBackendUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://real-backend-url.com"
+    : "http://localhost:5000";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <ConvexClerkProvider>
-      <CreateGameDataProvider>
-        <html lang="en">
-          <body
-            className={`${korinna.variable} ${montserrat.variable} ${swiss911.variable} text-white`}
-          >
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string}
+      appearance={{
+        layout: {
+          socialButtonsVariant: "iconButton",
+          logoImageUrl: "/icons/j.png",
+          animations: true,
+        },
+        variables: {
+          colorBackground: "#f5f5f5",
+          colorPrimary: "#060ce9",
+          colorText: "black",
+          colorInputBackground: "#eeeeee",
+          colorInputText: "black",
+        },
+      }}
+    >
+      <html lang="en">
+        <body
+          className={`${korinna.variable} ${montserrat.variable} ${swiss911.variable} text-white`}
+        >
+          <ClientSocketProvider backendUrl={resolvedBackendUrl}>
             {children}
-          </body>
-        </html>
-      </CreateGameDataProvider>
-    </ConvexClerkProvider>
+          </ClientSocketProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

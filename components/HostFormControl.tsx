@@ -23,12 +23,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Control, FieldPath, UseFormSetValue } from "react-hook-form";
-import { ArchiveSchema, cn } from "@/lib/utils";
+import { HostGameSchema, cn } from "@/lib/utils";
 import { z } from "zod";
-import { ArchiveLists } from "@/types";
 import { Button } from "./ui/button";
 
-const formSchema = ArchiveSchema("");
+const formSchema = HostGameSchema;
 
 interface HostFormFieldProps {
   setValue: UseFormSetValue<z.infer<typeof formSchema>>;

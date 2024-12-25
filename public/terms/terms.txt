@@ -1,0 +1,14 @@
+Terms of Use
+J! Archive is a website that provides a reference of historical information regarding the Jeopardy! television show and related data. The data found on J! Achive, its organization, and its statistical synthesis as provided by J! Archive are the products of the labor of its contributors. By using J! Archive, you agree to respect that labor and refrain from activities that undercut, devalue, abuse, misappropriate, or improperly exploit that labor, as set forth below. By using J! Archive, you consent to data collection by J! Archive, as set forth below.
+
+Prohibitions against scraping, republication, monetization, and malicious use
+By using J! Archive, you agree not to:
+
+use or attempt to use automated means (e.g., website scraping software) to collect, or otherwise systematically collect, data provided by J! Archive, whether directly from J! Archive or from an authorized or unauthorized mirror or other website derived from J! Archive ("data collected or derived from J! Archive");
+republish data provided by J! Archive and collected or derived from J! Archive;
+monetize data provided by J! Archive and collected or derived from J! Archive, e.g., by selling advertisements on a website that republishes data provided by and collected or derived from J! Archive;
+access or attempt to access J! Archive data not provided by its public-facing website;
+maliciously modify or attempt to modify data stored by J! Archive;
+fail to respond to takedown requests for removal of data collected or derived from J! Archive when such requests are made by authorized J! Archive contributors or their lawful representatives, and to promptly remove from publication data collected or derived from J! Archive in compliance with such requests;
+harass J! Archive contributors.
+Notwithstanding the above, the Jeopardy! game show and its agents and representatives are expressly permitted to republish data collected or derived from J! Archive.

@@ -2,31 +2,23 @@
 import CreateGameTab from "@/components/CreateGameTab";
 import { Card } from "@/components/ui/card";
 import { Tabs } from "@/components/ui/tabs";
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 
 const Home = () => {
-  const router = useRouter();
-  const { user } = useUser();
-  if (!user?.username) {
-    router.push("/sign-in");
-  }
-
   const tabs = [
     {
       title: "Jeopardy",
       value: "jeopardy",
-      content: <CreateGameTab activeTab="jeopardy" />,
+      content: <CreateGameTab activeTab="single" />,
     },
     {
       title: "Double Jeopardy",
       value: "double-jeopardy",
-      content: <CreateGameTab activeTab="doubleJeopardy" />,
+      content: <CreateGameTab activeTab="double" />,
     },
     {
       title: "Final Jeopardy",
       value: "final-jeopardy",
-      content: <CreateGameTab activeTab="finalJeopardy" />,
+      content: <CreateGameTab activeTab="final" />,
     },
   ];
 

@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { CreatedClue } from "@/types";
+import { CreatedClue } from "@/types/global";
 
 export const createClues = mutation({
   args: {

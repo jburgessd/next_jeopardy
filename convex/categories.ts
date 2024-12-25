@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-import { CreatedCategory } from "@/types";
+import { CreatedCategory } from "@/types/global";
 import { Id } from "./_generated/dataModel";
 
 export const createCategory = mutation({
