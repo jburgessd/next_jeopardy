@@ -7,57 +7,41 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 const JoinLobby = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [gameId, setGameId] = useState(localStorage.getItem("gameId") || "");
-  const [updateGame, setUpdateGame] = useState(false);
   const { gameRoom, isHost, isConnected, sendMessage } = useClientSocket();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isConnected) return;
-    setUpdateGame(false);
-    if (!gameId) router.push("/");
-    sendMessage("getUpdatedGame", { gameId: gameId }, getGameCallback);
-  }, [isConnected, updateGame]);
-
-  useEffect(() => {
-    console.log(JSON.stringify(gameRoom?.players));
-    setPlayers(gameRoom?.players || []);
-  }, [gameRoom]);
-
-  const getGameCallback = (resp: any) => {
-    if (resp.error) router.push("/");
-  };
-
-  const removePlayerCallback = (resp: any) => {
-    if (resp.response) {
-      setUpdateGame(true);
-    }
-  };
+    if (!isConnected || !gameRoom) return;
+    sendMessage("getUpdatedGame", { gameId: gameRoom.gameId });
+  }, []);
 
   const removePlayer = (playerId: string) => {
-    sendMessage(
-      "removePlayer",
-      { gameId: gameId, playerUserId: playerId },
-      removePlayerCallback
-    );
+    sendMessage("removePlayer", {
+      gameId: gameRoom?.gameId,
+      playerUserId: playerId,
+    });
   };
 
   const onStartGame = () => {
     sendMessage(
       "updateGame",
       {
-        gameId: gameId,
+        gameId: gameRoom?.gameId,
         updateObjs: [{ gameState: "SINGLE" }],
       },
       (resp: any) => {
         if (resp.response) {
-          window.open(`/viewer/${gameId}`, "_blank", "noopener,noreferrer");
-          setUpdateGame(true);
+          window.open(
+            `/viewer/${gameRoom?.gameId}`,
+            "_blank",
+            "noopener,noreferrer"
+          );
         }
       }
     );
   };
+
+  if (!gameRoom) return null;
 
   return (
     <>
@@ -66,13 +50,20 @@ const JoinLobby = () => {
         {gameRoom?.title}
       </h1>
       <div className="h-[40%] w-[80%] grid grid-cols-1 grid-rows-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {players.map((player: Player) => (
+        {gameRoom.players.map((player: Player) => (
           <Card
             key={player.userId + "1"}
             className="flex flex-col p-6 rounded bg-clue-gradient justify-between border-2 h-full w-full border-black-0 text-shadow-h"
           >
             <div className="flex flex-row w-full justify-center px-2">
-              <p className="text-2xl overflow-ellipsis">{player.name}</p>
+              <p
+                className="text-2xl overflow-ellipsis"
+                style={{
+                  textTransform: "uppercase",
+                }}
+              >
+                {player.name}
+              </p>
             </div>
             {isHost ? (
               <Button

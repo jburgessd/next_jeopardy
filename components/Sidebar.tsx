@@ -61,11 +61,11 @@ const SidebarMain = () => {
   return (
     <>
       {!open && !isRoot ? (
-        <div className="p-5 pt-7">
+        <div className="pt-7">
           <SidebarTrigger variant="default" />
         </div>
       ) : null}
-      {!open && !isRoot && user ? (
+      {!open && isRoot && user ? (
         <div className="absolute bottom-0 p-5 pb-7">
           <Button variant="ghost" onClick={cleanServer}>
             CS
@@ -124,7 +124,7 @@ const SidebarMain = () => {
               as="button"
               className="flex bg-clue-gradient items-center text-white"
             >
-              <Link href="/sign-up">Sign Up</Link>
+              <Link href="/sign-in">Sign Up</Link>
             </HoverBorderGradient>
           </SignedOut>
         </SidebarFooter>

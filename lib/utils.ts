@@ -28,6 +28,7 @@ export const GameSchema = z.object({
     clue: z.object({
       answer: z.string(),
       media: z.union([z.string(), z.array(z.string())]).optional(),
+      question: z.string(),
     }),
   }),
 });

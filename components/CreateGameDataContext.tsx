@@ -43,7 +43,7 @@ const CreateGameDataProvider: React.FC<{ children: ReactNode }> = ({
   const [objectIsVerified, setObjectIsVerified] = useState(false);
 
   const updateTitle = (title: string) => {
-    setGameObject((prevState) => ({ ...prevState, title }));
+    setGameObject((prevState) => ({ ...prevState, name: title }));
   };
 
   const updateCreator = (creator: string) => {

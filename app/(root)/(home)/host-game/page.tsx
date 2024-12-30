@@ -73,7 +73,6 @@ const Home = () => {
     const getGameData = async () => {
       if (gameValue != null && gameValue !== "") {
         const ret = await getArchiveGameData(gameValue);
-        console.log(ret);
         setValue("validGameData", GameSchema.parse(ret));
       }
     };
@@ -117,6 +116,7 @@ const Home = () => {
       gameId: gameIdValue,
       hostName: user!.username,
       gameBoard: validGameData,
+      buzzDuration: 10,
     });
     router.push(`/lobby/${gameIdValue}`);
   };

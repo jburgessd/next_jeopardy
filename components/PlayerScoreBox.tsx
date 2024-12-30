@@ -1,23 +1,27 @@
 import React from "react";
 import { Card } from "./ui/card";
+import { useClientSocket } from "@/providers/ClientSocketProvider";
 
 const PlayerScoreBox = ({ player }: { player: Player }) => {
+  const { gameRoom } = useClientSocket();
   return (
     <Card
       className={`size-full border-2 border-black-0 text-shadow-h ${
-        player.active ? "bg-active" : "bg-clue-gradient"
+        gameRoom?.activePlayer === player.userId
+          ? "bg-active"
+          : "bg-clue-gradient"
       } justify-items-center`}
     >
       <p
         className=""
         style={{
-          textTransform: "capitalize",
+          textTransform: "uppercase",
         }}
       >
         {player.name}
       </p>
       <p className={player.score < 0 ? "text-negative" : "text-white"}>
-        $ {player.score}
+        ${player.score}
       </p>
     </Card>
   );

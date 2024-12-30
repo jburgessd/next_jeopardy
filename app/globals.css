@@ -77,10 +77,10 @@
 }
 
 .category {
-  font-size: 1.3rem;
-  line-height: 2.75vh;
+  font-size: clamp(0.5rem, 1.2vw + 0.6vh, 3.5rem);
   text-transform: uppercase;
-  letter-spacing: 0.2vw;
+  letter-spacing: 0.1vw;
+  line-height: calc(1.2vw + 0.6vh);
   text-align: center;
   cursor: default;
   color: #ffffff;

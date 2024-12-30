@@ -13,17 +13,17 @@ const HostGamePage = () => {
   return (
     <>
       <ResizablePanelGroup direction="horizontal" className="w-full h-full">
-        <ResizablePanel defaultSize={80} maxSize={85} minSize={50}>
+        <ResizablePanel defaultSize={75} maxSize={75} minSize={60}>
           <GameBoardView />
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel defaultSize={20}>
+        <ResizablePanel defaultSize={25}>
           <ResizablePanelGroup direction="vertical">
-            <ResizablePanel defaultSize={20} maxSize={40} minSize={10}>
+            <ResizablePanel defaultSize={25} maxSize={25} minSize={25}>
               <CurrentAnswerViewer />
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={80}>
+            <ResizablePanel defaultSize={75}>
               <HostControlArea />
             </ResizablePanel>
           </ResizablePanelGroup>

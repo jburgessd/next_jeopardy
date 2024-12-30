@@ -35,16 +35,16 @@ const CreateGameTab = ({
     try {
       if (gameObject === null) return;
       setIsLoading(true);
-      const ver = verifyGameObject();
-      if (!ver[0]) {
-        setIsLoading(false);
-        toast({
-          title: "Error",
-          description: ver[1],
-          variant: "destructive",
-        });
-        return;
-      }
+      // const ver = verifyGameObject();
+      // if (!ver[0]) {
+      //   setIsLoading(false);
+      //   toast({
+      //     title: "Error",
+      //     description: ver[1],
+      //     variant: "destructive",
+      //   });
+      //   return;
+      // }
       // Add functionality to save the game as a JSON
       const jsonString = JSON.stringify(gameObject, null, 2);
 
@@ -193,7 +193,7 @@ const CreateGameTab = ({
                 <Input
                   id="media"
                   placeholder={
-                    gameObject.final.clue.media.length === 0
+                    gameObject.final.clue.media?.length === 0
                       ? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                       : gameObject.final.clue.media[0] || ""
                   }

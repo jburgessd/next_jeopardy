@@ -3,9 +3,7 @@ import { useClientSocket } from "@/providers/ClientSocketProvider";
 import { Card } from "./ui/card";
 
 const CurrentAnswerViewer = () => {
-  const { gameRoom } = useClientSocket();
-
-  useEffect(() => {}, [gameRoom?.activeClue]);
+  const { activeClue } = useClientSocket();
 
   return (
     <Card
@@ -15,14 +13,14 @@ const CurrentAnswerViewer = () => {
       }}
     >
       <h1
-        className="text-shadow-h break-words clue-responsive-text"
+        className="text-shadow-h break-words clue-responsive-text hover:cursor-default"
         style={{
           wordWrap: "break-word", // Ensures words wrap within the container
           whiteSpace: "normal", // Allows wrapping
           textAlign: "center", // Centers the text horizontally
         }}
       >
-        {gameRoom?.activeClue?.clue?.question || "No active clue"}
+        {activeClue?.clue?.question || "No active clue"}
       </h1>
     </Card>
   );

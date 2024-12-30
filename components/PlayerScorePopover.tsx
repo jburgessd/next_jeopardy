@@ -4,7 +4,6 @@ import { Button } from "./ui/button";
 import PlayerScoreBox from "./PlayerScoreBox";
 import { Input } from "./ui/input";
 import { useClientSocket } from "@/providers/ClientSocketProvider";
-import { set } from "zod";
 
 const PlayerScorePopover = ({ player }: { player: Player }) => {
   const { gameRoom, isHost, sendMessage } = useClientSocket();
@@ -24,7 +23,7 @@ const PlayerScorePopover = ({ player }: { player: Player }) => {
     }
 
     setScoreChangeValue(playerMatch.score.toString());
-  }, []);
+  }, [gameRoom?.players]);
 
   const updatePlayerScore = (isOpen: boolean) => {
     if (isOpen || !scoreChangeValue) return;
@@ -44,10 +43,41 @@ const PlayerScorePopover = ({ player }: { player: Player }) => {
     }
 
     // Send the player object and ID in the message
-    sendMessage("updatePlayer", {
+    sendMessage("updatePlayers", {
       gameId: gameRoom.gameId,
-      playerId: player?.userId,
-      update: { score: scoreChangeValue },
+      updateObjs: [
+        {
+          userId: player?.userId,
+          score: scoreChangeValue,
+        },
+      ],
+    });
+  };
+
+  const setActivePlayer = () => {
+    if (!gameRoom || !gameRoom.players) {
+      console.error("No game room or players available.");
+      return;
+    }
+
+    // Find the player by playerId
+    const playerMatch = gameRoom.players.find(
+      (p) => p.userId === player?.userId
+    );
+
+    if (!playerMatch) {
+      console.error(`Player with ID ${player.userId} not found.`);
+      return;
+    }
+
+    // Send the player object and ID in the message
+    sendMessage("updateGame", {
+      gameId: gameRoom.gameId,
+      updateObjs: [
+        {
+          activePlayer: playerMatch.userId,
+        },
+      ],
     });
   };
 
@@ -56,7 +86,14 @@ const PlayerScorePopover = ({ player }: { player: Player }) => {
       {isHost ? (
         <Popover onOpenChange={(open) => updatePlayerScore(open)}>
           <PopoverTrigger asChild>
-            <Button size="full" className="size-full">
+            <Button
+              size="full"
+              className="size-full"
+              onContextMenu={(e: React.MouseEvent) => {
+                e.preventDefault();
+                setActivePlayer();
+              }}
+            >
               <PlayerScoreBox player={player} />
             </Button>
           </PopoverTrigger>
@@ -73,6 +110,7 @@ const PlayerScorePopover = ({ player }: { player: Player }) => {
                   <Input
                     className="text-black-0 col-span-2"
                     type="text"
+                    inputMode="numeric"
                     placeholder="Enter the new score"
                     value={scoreChangeValue}
                     onChange={(e) => setScoreChangeValue(e.target.value)}

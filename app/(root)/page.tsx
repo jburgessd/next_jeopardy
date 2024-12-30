@@ -24,7 +24,7 @@ const Home = () => {
             <Card className="max-w-[65%] bg-clue-gradient rounded-lg">
               <CardHeader>
                 <CardTitle className="text-3xl text-white">
-                  Host your own 'Jeopardy!' games!
+                  Host your own Jeopardy! games!
                 </CardTitle>
                 <CardDescription className="text-gray-400">
                   Channel your inner Alex Trebek or Ken Jennings!
@@ -32,11 +32,11 @@ const Home = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-white text-wrap">
-                  With this website, you can create and host your own
-                  'Jeopardy!' games or compete against your friends in
-                  previously aired games. You can even game all in one place,
-                  just start up a game an cast it to a tv screen and scan the QR
-                  code on your phone to join the game.
+                  With this website, you can create and host your own Jeopardy!
+                  games or compete against your friends in previously aired
+                  games. You can even game all in one place, just start up a
+                  game an cast it to a tv screen and scan the QR code on your
+                  phone to join the game.
                   <br /> Sign up to get started!
                 </p>
               </CardContent>

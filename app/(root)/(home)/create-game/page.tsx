@@ -1,7 +1,7 @@
 "use client";
 import CreateGameTab from "@/components/CreateGameTab";
 import { Card } from "@/components/ui/card";
-import { Tabs } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/hover-tabs";
 
 const Home = () => {
   const tabs = [

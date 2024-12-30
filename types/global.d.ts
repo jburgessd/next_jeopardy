@@ -11,24 +11,34 @@ declare interface JeopardyGameObject {
   name: string;
   single: Category[];
   double: Category[];
-  final: {
-    category: string;
-    clue: {
-      answer: string;
-      media: string[] | string;
-      question: string;
-    };
-  };
+  final: FinalClue;
 }
 
 declare interface ActiveClue {
   clue: Clue;
   category: string;
-  buzzed: string[];
+  buzzed: string;
+  isBuzzed: boolean;
+  showQuestion: boolean;
   timer: {
-    start: bool;
-    isUp: bool;
-    fromTime: number;
+    active: boolean;
+    duration: number;
+  };
+}
+
+declare interface FinalClue {
+  category: string;
+  state?: string;
+  clue: {
+    answer: string;
+    media: string[] | string;
+    question: string;
+  };
+  timer?: {
+    finalActive: boolean;
+    finalDuration: number;
+    guessActive: boolean;
+    guessDuration: number;
   };
 }
 
@@ -50,6 +60,7 @@ declare interface Player {
   name: string;
   score: number;
   wager: number;
+  finalGuess?: string;
   buzzerActive: boolean;
   active: boolean;
 }

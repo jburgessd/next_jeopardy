@@ -134,15 +134,15 @@ export async function getArchiveGameData(link: string) {
   const finalClue = finalJeopardyElement
     ?.querySelector(".clue_text")
     ?.text.trim();
-  const question = "What is "
+  const finalQuestion = "What is "
     .concat(
       finalJeopardyElement!.querySelector(".correct_response")!.text.trim()
     )
     .concat("?");
 
   const final = {
-    category: finalCategory!,
-    clue: { answer: finalClue!, question: question! },
+    category: finalCategory,
+    clue: { answer: finalClue, question: finalQuestion },
   };
 
   const ret = {
