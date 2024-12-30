@@ -35,8 +35,8 @@ export const metadata: Metadata = {
 
 // Determine backend URL based on environment
 const resolvedBackendUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://real-backend-url.com"
+  (process.env.SET_ENV as string) === "production"
+    ? (process.env.NEXT_PUBLIC_API_URL as string)
     : "http://localhost:5000";
 
 export default async function RootLayout({
