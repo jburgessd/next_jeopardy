@@ -93,12 +93,11 @@ const ActiveClue = () => {
       updateObjs: [
         {
           userId: playerMatch.userId,
-          score: Number(
-            playerMatch.score +
-              (activeClue.clue.double
-                ? playerMatch.wager
-                : activeClue.clue.value)
-          ),
+          score:
+            Number(playerMatch.score) +
+            (activeClue.clue.double
+              ? Number(playerMatch.wager)
+              : Number(activeClue.clue.value)),
         },
       ],
     });
@@ -138,12 +137,11 @@ const ActiveClue = () => {
       updateObjs: [
         {
           userId: playerMatch.userId,
-          score: Number(
-            playerMatch.score -
-              (activeClue.clue.double
-                ? playerMatch.wager
-                : activeClue.clue.value)
-          ),
+          score:
+            Number(playerMatch.score) -
+            (activeClue.clue.double
+              ? Number(playerMatch.wager)
+              : Number(activeClue.clue.value)),
         },
       ],
     });
