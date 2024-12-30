@@ -125,7 +125,7 @@ const SidebarMain = () => {
               as="button"
               className="flex bg-clue-gradient items-center text-white"
             >
-              <Link href="/sign-in">Sign Up</Link>
+              <Link href="/sign-in">Sign In</Link>
             </HoverBorderGradient>
           </SignedOut>
         </SidebarFooter>

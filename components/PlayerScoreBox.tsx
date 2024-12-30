@@ -6,7 +6,7 @@ const PlayerScoreBox = ({ player }: { player: Player }) => {
   const { gameRoom } = useClientSocket();
   return (
     <Card
-      className={`size-full border-2 border-black-0 text-shadow-h ${
+      className={`size-full border-2 border-black-0 text-shadow-h text-center ${
         gameRoom?.activePlayer === player.userId
           ? "bg-active"
           : "bg-clue-gradient"

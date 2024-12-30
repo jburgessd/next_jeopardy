@@ -7,7 +7,6 @@ import { useClientSocket } from "@/providers/ClientSocketProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { PassThrough } from "stream";
 
 // Component built so a new tab can be set to another screen, so players can view the game.
 const ViewerPage: React.FC = () => {
