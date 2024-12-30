@@ -161,10 +161,18 @@ const ActiveClue = () => {
       return { ...p, buzzerActive: false };
     });
     if (!isHost) return;
+    const updatedActiveClue = {
+      ...activeClue,
+      isBuzzed: false,
+      buzzed: null,
+    };
 
     sendMessage("updateGame", {
       gameId: gameRoom?.gameId,
-      updateObjs: [{ players: updatedPlayers }],
+      updateObjs: [
+        { players: updatedPlayers },
+        { activeClue: updatedActiveClue },
+      ],
     });
   };
 

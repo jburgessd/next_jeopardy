@@ -146,7 +146,7 @@ const FinalJeopardy = () => {
                 >
                   <div className="flex flex-col w-full justify-center space-y-1">
                     <p
-                      className="text-center text-lg overflow-ellipsis"
+                      className="text-center clue-responsive-text overflow-ellipsis"
                       style={{
                         textTransform: "uppercase",
                       }}
@@ -154,7 +154,7 @@ const FinalJeopardy = () => {
                       {player.name}
                     </p>
                     <p
-                      className="text-center text-sm overflow-ellipsis"
+                      className="text-center clue-responsive-text overflow-ellipsis"
                       style={{
                         textTransform: "uppercase",
                       }}
@@ -162,7 +162,7 @@ const FinalJeopardy = () => {
                       {player.finalGuess}
                     </p>
                     <p
-                      className="text-center text-sm overflow-ellipsis"
+                      className="text-center clue-responsive-text overflow-ellipsis"
                       style={{
                         textTransform: "uppercase",
                       }}

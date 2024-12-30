@@ -51,6 +51,7 @@ const SidebarMain = () => {
 
   // Disable SidebarTrigger if on the root path
   const isRoot = pathname === "/";
+  const isCreate = pathname === "/create-game";
 
   const cleanServer = () => {
     if (isConnected) {
@@ -65,7 +66,7 @@ const SidebarMain = () => {
           <SidebarTrigger variant="default" />
         </div>
       ) : null}
-      {!open && isRoot && user ? (
+      {!open && isCreate && user ? (
         <div className="absolute bottom-0 p-5 pb-7">
           <Button variant="ghost" onClick={cleanServer}>
             CS
