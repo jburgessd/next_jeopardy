@@ -25,7 +25,11 @@ const HostControlArea: React.FC = () => {
     if (!activeClue && !gameRoom?.finalClue) return;
 
     setIsPlaying((prev) => !prev);
-    if (gameRoom?.finalClue && gameRoom?.finalClue.state === "WAGER") {
+    if (
+      gameRoom?.gameState === "FINAL" &&
+      gameRoom?.finalClue.state === "WAGER"
+    ) {
+      setIsPlaying(false);
       sendMessage("updateGame", {
         gameId: gameRoom?.gameId,
         updateObjs: [
@@ -33,7 +37,7 @@ const HostControlArea: React.FC = () => {
             finalClue: {
               ...gameRoom.finalClue,
               timer: {
-                finalActive: !isPlaying,
+                finalActive: false,
                 finalDuration: finalTimer,
                 guessActive: false,
                 guessDuration: guessTimer,
@@ -44,7 +48,11 @@ const HostControlArea: React.FC = () => {
       });
       return;
     }
-    if (gameRoom?.finalClue && gameRoom?.finalClue.state === "GUESS") {
+    if (
+      gameRoom?.gameState === "FINAL" &&
+      gameRoom?.finalClue.state === "GUESS"
+    ) {
+      setIsPlaying(false);
       sendMessage("updateGame", {
         gameId: gameRoom?.gameId,
         updateObjs: [
@@ -54,7 +62,7 @@ const HostControlArea: React.FC = () => {
               timer: {
                 finalActive: false,
                 finalDuration: finalTimer,
-                guessActive: !isPlaying,
+                guessActive: false,
                 guessDuration: guessTimer,
               },
             },
@@ -84,6 +92,7 @@ const HostControlArea: React.FC = () => {
     setIsPlaying(false);
     if (!activeClue && gameRoom?.gameState !== "FINAL") return;
     if (gameRoom?.gameState === "FINAL") {
+      setIsPlaying(false);
       sendMessage("updateGame", {
         gameId: gameRoom?.gameId,
         updateObjs: [{ finalClue: { ...gameRoom.finalClue, state: "GUESS" } }],

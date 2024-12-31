@@ -32,7 +32,7 @@ export const ActiveClueTimer: React.FC<ActiveClueTimerProps> = ({
         isPlaying={active}
         duration={duration}
         colors={["#008000", "#FFCC00", "#FF0000"]}
-        colorsTime={[duration, duration / 2, 3]}
+        colorsTime={[duration, duration / 2, 0]}
         size={75}
         strokeWidth={8}
         onComplete={(totalElapsedTime) => {
